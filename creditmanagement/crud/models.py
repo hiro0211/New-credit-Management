@@ -5,24 +5,24 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 
 class Student(models.Model):
   grade = models.CharField(
-    '学年', max_length=5, 
+    '学年', max_length=5, blank=False, null=True,
     choices=(('1年', '1年'),('2年', '2年'), 
               ('3年', '3年'),('4年', '4年')),
     default='4年'
   )
   semester = models.CharField(
-    '現在の学期', max_length=5,
+    '現在の学期', max_length=5, blank=False, null=True,
     choices=(('前期', '前期'), ('後期', '後期')),
     default='後期'
   )
   faculty = models.CharField(
-    '学部', max_length=10,
+    '学部', max_length=10, blank=False, null=True,
     choices=(('経済学部', '経済学部'), ('経営学部', '経営学部'), 
             ('法学部', '法学部')),
     default='経済学科'
   )
   department = models.CharField(
-    '学科', max_length=20,
+    '学科', max_length=20, blank=False, null=True,
     choices=(('経済学科', '経済学科'), ('国際経済学科', '国際経済学科'), 
             ('総合経済政策学科', '総合経済政策学科')),
     default='経済学科'

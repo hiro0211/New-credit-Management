@@ -29,7 +29,9 @@
 {% block title %}単位管理.com{% endblock %}
 {% block content %}
 
-<button class="btn btn-success" style="margin-right: 5rem; margin-left: 1rem; margin-bottom: 1rem;" type="button" onclick="location.href='{% url 'unipa_register' %}'">履修した科目を登録</button>
+<button class="btn btn-success" style="margin-left: 1rem; margin-bottom: 1rem; margin-right: 2rem;" type="button" onclick="location.href='{% url 'unipa_register' %}'">履修した科目を登録</button>
+<button class="btn btn-outline-danger" type="button" style=" margin-bottom: 1rem;" onclick="location.href='{% url 'delete_all' %}'">科目を一括削除</button>
+
 
 {# 前へ #}
 {% if page_obj.has_previous %}
