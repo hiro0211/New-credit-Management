@@ -132,7 +132,7 @@ LOGIN_REDIRECT_URL = "list"
 
 LOGOUT_REDIRECT_URL = 'top'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 DEFAULT_AUTO_EMAIL = 'arimurahiroaki40@gmail.com'
 EMAIL_HOST = 'smtp.gmail.com'
