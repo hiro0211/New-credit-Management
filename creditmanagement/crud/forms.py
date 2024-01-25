@@ -38,11 +38,11 @@ class SignUpForm2(forms.ModelForm):
         # 学科の選択肢をfacultyに基づいて変更
         self.fields['department'].queryset = self.get_department_choices(faculty)
 
-    def get_department_choices(self, faculty):
-      if faculty == '経済学部':
-          return models.Choices(('経済学科', '経済学科'), ('国際経済学科', '国際経済学科'), ('総合経済政策学科', '総合経済政策学科'))
-      elif faculty == '経営学部':
-          return models.Choices(('経営学科', '経営学科'), ('商学科', '商学科'), ('会計学科', '会計学科'), ('キャリアマネジメント学科', 'キャリアマネジメント学科'))
+  def get_department_choices(self, faculty):
+    if faculty == '経済学部':
+        return models.Choices(('経済学科', '経済学科'), ('国際経済学科', '国際経済学科'), ('総合経済政策学科', '総合経済政策学科'))
+    elif faculty == '経営学部':
+        return models.Choices(('経営学科', '経営学科'), ('商学科', '商学科'), ('会計学科', '会計学科'), ('キャリアマネジメント学科', 'キャリアマネジメント学科'))
 
 
 
