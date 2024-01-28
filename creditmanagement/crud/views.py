@@ -1,7 +1,7 @@
 from typing import Any
 from django.db.models.query import QuerySet
 from django.forms.models import BaseModelForm
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect, resolve_url
 from django.views.generic import TemplateView, ListView, DetailView
@@ -345,35 +345,56 @@ class LogoutView(LoginRequiredMixin, LogoutView):
   def post(self, request, *args, **kwargs):
     return HttpResponseRedirect(reverse_lazy('top'))
 
-class SignUpView(CreateView):
-  form_class = SignUpForm
-  template_name = "crud/signup.html"
-  success_url = reverse_lazy('list')
-
-  def get_context_data(self, **kwargs):
-    context = super().get_context_data(**kwargs)
-    context['form2'] = SignUpForm2()
-    return context
-
-  def post(self, request, *args, **kwargs):
-    self.object = None
-    form = self.get_form()
-    form2 = SignUpForm2(self.request.POST)
-    if form.is_valid() and form2.is_valid():
-      return self.form_valid(form, form2)
+def get_department_choices(request):
+    faculty = request.GET.get('faculty')
+    
+    if faculty == "経済学部":
+        department_choices = [
+            ("経済学科", "経済学科"),
+            ("国際経済学科", "国際経済学科"),
+            ("総合経済政策学科", "総合経済政策学科")
+        ]
+    elif faculty == "経営学部":
+        department_choices = [
+            ("経営学科", "経営学科"),
+            ("商学科", "商学科"),
+            ("会計学科", "会計学科"),
+            ("キャリアマネジメント学科", "キャリアマネジメント学科")
+        ]
     else:
-      return self.form_invalid(form)
-    
-  def form_valid(self, form, form2):
-    user = form.save()
-    login(self.request, user)
-    self.object = user
-    
-    student = form2.save(commit=False)
-    student.user = user
-    student.save()
+        department_choices = []
 
-    return HttpResponseRedirect(self.get_success_url())
+    return JsonResponse({'choices': department_choices})
+
+class SignUpView(CreateView):
+    form_class = SignUpForm
+    template_name = "crud/signup.html"
+    success_url = reverse_lazy('list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form2'] = SignUpForm2()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        form = self.get_form()
+        form2 = SignUpForm2(self.request.POST)
+        if form.is_valid() and form2.is_valid():
+            return self.form_valid(form, form2)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form, form2):
+        user = form.save()
+        login(self.request, user)
+        self.object = user
+
+        student = form2.save(commit=False)
+        student.user = user
+        student.save()
+
+        return HttpResponseRedirect(self.get_success_url())
 
 class PasswordChange(LoginRequiredMixin, PasswordChangeView):
   success_url = reverse_lazy('crud:password_change_done')
@@ -438,6 +459,7 @@ def calculate_total(request):
 
     if all([user_faculty == "経済学部", user_grade == '1年']):
         #必修科目を入れる。
+        
         required_list = ["基礎ゼミ", "演習Ⅰ", "演習Ⅱ"]
         filtered_required = Subject.objects.filter(is_required=True, user=request.user)
         filtered_required = [subject.name for subject in filtered_required]
@@ -461,8 +483,8 @@ def calculate_total(request):
         department_subject = filtered_department.aggregate(Sum('credit'))['credit__sum']
         rest_department = 28 - (department_subject or 0)
 
-        filtered_remedical = Subject.objects.filter(category_id = 32, user=request.user)
-        remedial_subject = filtered_remedical.aggregate(Sum('credit'))['credit__sum']
+        filtered_remedial = Subject.objects.filter(category_id = 32, user=request.user)
+        remedial_subject = filtered_remedial.aggregate(Sum('credit'))['credit__sum']
 
         filtered_information = Subject.objects.filter(category_id = 10,  user=request.user)
         information_subject = filtered_information.aggregate(Sum('credit'))['credit__sum']
@@ -483,18 +505,17 @@ def calculate_total(request):
         total_credit = (kyoutu or 0) + (first_language or 0) + (second_language or 0) + (gakubu_subject or 0) + (department_subject or 0) + (information_subject or 0) + (field_subject or 0) + (remedial_subject or 0) 
         #total_credit = all_credit - (free_subject or 0)
 
-        #進級要件の処理
-        promotion_specialize = 4 - (specialize_subject or 0)
-        rest_promotion = 20 - (total_credit or 0)
+        #3年生への進級要件
+        rest_promotion = 56 - (total_credit or 0)
 
         # kyoutu = Subject.objects.filter(category_id = 4)
         rest_credit = 128 - (total_credit or 0 )
         return render(request, 'economics_total.html', {'kyoutu':kyoutu, 'first_language': first_language, 'second_language': second_language, 'gakubu_subject': gakubu_subject, 
                                               'department_subject': department_subject, 'information_subject':information_subject, 'field_subject':field_subject, 'remedial_subject': remedial_subject,
-                                              'specialize_subject':specialize_subject, 'foreign_language': foreign_language, 'total_credit': total_credit, 'rest_credit': 'rest_credit', 
+                                              'specialize_subject':specialize_subject, 'foreign_language': foreign_language, 'total_credit': total_credit, 'rest_credit': rest_credit, 
                                               'rest_kyoutu': rest_kyoutu, 'rest_first': rest_fisrt, 'rest_gakubu': rest_gakubu, 'rest_department': rest_department, 'rest_information': rest_infomation, 
-                                              'rest_specialize': rest_specialize, 'rest_foreign': rest_foreign, 'free_subject': free_subject, 'promotion_spesiailze': promotion_specialize, 
-                                              'rest_promotion': rest_promotion, 'filtered_required': filtered_required, 'required_list': required_list})
+                                              'rest_specialize': rest_specialize, 'rest_foreign': rest_foreign, 'free_subject': free_subject, 'rest_promotion': rest_promotion, 
+                                              'filtered_required': filtered_required, 'required_list': required_list})
 
     elif all([user_faculty == "経済学部", user_grade == '2年']):
         #必修科目を入れる。

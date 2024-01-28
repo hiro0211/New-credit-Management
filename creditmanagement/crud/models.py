@@ -31,6 +31,7 @@ class Student(models.Model):
   )
   user= models.OneToOneField(settings.AUTH_USER_MODEL, 
 on_delete=models.CASCADE, blank=True, null=True)
+  
 
 class Category(models.Model):
   name = models.CharField(max_length=200, verbose_name="科目カテゴリ")
