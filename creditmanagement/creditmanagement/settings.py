@@ -16,10 +16,7 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env()
-env.read_env(os.path.join(BASE_DIR, '.env'))
-SECRET_KEY = env('SECRET_KEY')
-DEBUG = env('DEBUG')
+DEBUG = True
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -34,10 +31,8 @@ STATICFILES_DIRS = (
 SECRET_KEY = 'django-insecure-f((6skmj(#9#bfhq5@t0^!$!l8)v@$7d#x_es^7(tbyb20j3w9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ["46.51.238.131", "localhost", '127.0.0.1']
 
 # Application definition
 
@@ -88,7 +83,14 @@ WSGI_APPLICATION = 'creditmanagement.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': env.db(),
+    'default': {
+    'ENGINE': 'django.db.backends.mysql',
+    'NAME': 'credit',
+    'USER': 'arimu',
+    'PASSWORD': 'Yuudai07Arimura'
+    #'HOST': 'database-1.cfgyao22qiwq.ap-northeast-1.rds.amazonaws.com',
+    #'PORT': '3306',
+    }
 }
 
 # Password validation

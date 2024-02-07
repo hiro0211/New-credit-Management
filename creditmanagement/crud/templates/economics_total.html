@@ -35,7 +35,6 @@
                         <li class="list-group-item">学科共通科目（情報専門科目）あと <span class="fw-bolder">{% if rest_information > 0 %}{{ rest_information }}{% else %}0{% endif %}</span> 単位</li>
                         <li class="list-group-item">学部共通科目あと <span class="fw-bolder">{% if rest_gakubu > 0 %}{{ rest_gakubu }}{% else %}0{% endif %}</span> 単位</li>
                         <li class="list-group-item">学科共通科目あと <span class="fw-bolder">{% if rest_department > 0 %}{{ rest_department }}{% else %}0{% endif %}</span> 単位</li>
-                        <li class="list-group-item">必須科目 <span class="fw-bolder">{% for kamoku in filtered_required %} {{ kamoku }} {% endfor %}</span></li>
                         <li class="list-group-item">必須科目 <span class="fw-bolder">
                             {% for kamoku in required_list %} {% if not kamoku in filtered_required %}
                             {{ kamoku }} {% endif %} {% endfor %}</span></li>
@@ -58,9 +57,10 @@
                         <li class="list-group-item">第一外国語科目 {% if first_language > 0 %}{{ first_language }}{% else %}0{% endif %} 単位</li>
                         <li class="list-group-item">第二外国語科目 {% if second_language > 0 %}{{ second_language }}{% else %}0{% endif %} 単位</li>
                         <li class="list-group-item h5">専門科目 {% if specialize_subject > 0 %}{{ specialize_subject }}{% else %}0{% endif %} 単位</li>
+                        <li class="list-group-item">取得済み必須科目 <span class="fw-bolder">{% for kamoku in filtered_required %} {{ kamoku }} {% endfor %}</span></li>
                         <li class="list-group-item">学部共通科目 {% if gakubu_subject > 0 %}{{ gakubu_subject }}{% else %}0{% endif %} 単位</li>
                         <li class="list-group-item">学科共通科目 {% if department_subject > 0 %}{{ department_subject }}{% else %}0{% endif %} 単位</li>
-                        <li class="list-group-item">学科共通科目（情報専門科目） {% if information_subject > 0 %}{{ information_subject }}{% else %}0{% endif %} 単位
+                        <li class="list-group-item">学科共通科目（情報専門科目） {% if information_subject > 0 %}{{ information_subject }}{% else %}0{% endif %} 単位</li>
                         <li class="list-group-item">分野科目{% if field_subject > 0 %}{{ field_subject }}{% else %}0{% endif %} 単位</li>
                         <li class="list-group-item">学科共通科目(リメディアル) {% if remedial_subject > 0 %}{{ remedial_subject }}{% else %}0{% endif %} 単位</li>
                         <li class="list-group-item">自由科目 {% if free_subject > 0 %}{{ free_subject }}{% else %}0{% endif %} 単位</li>

@@ -88,6 +88,40 @@ def scrape_and_save_data(chrome_driver, semester_index, user, first_index=9):
         else:
           category = kamoku
 
+def scrape_faculty_of_low(chrome_driver, semester_index, user, first_index=9):
+    semester_elements = chrome_driver.find_elements(By.CSS_SELECTOR, 'table.outline>tbody>tr')[first_index + 2 * semester_index]  
+
+    Subject.objects.filter(user=user).delete
+    category = '' 
+    for tr in semester_elements.find_elements(By.CSS_SELECTOR, 'table>tbody>tr')[1:]:
+      try:
+        kamoku = tr.find_element(By.CSS_SELECTOR, 'td.kamokuList').text    
+        credit = tr.find_element(By.CSS_SELECTOR, 'td.tdTaniList').text
+        score = tr.find_element(By.CSS_SELECTOR, 'td.tdSotenList').text
+      except Exception:
+        pass
+      else:
+        if credit:
+          category_ = category
+          if category_ == '外国語科目':
+            if '英語' in kamoku or 'ライティング' in kamoku or 'English' in kamoku:
+              category_ = '英語科目'
+            else:
+              category_ = '第二外国語科目'
+          is_required = False
+          if any(["基礎ゼミ" in kamoku, "情報処理実習" in kamoku, "英語1A" in kamoku, "英語1B" in kamoku,
+                  "英語2A" in kamoku, "英語2B" in kamoku, "英語3A" in kamoku, "英語3B" in kamoku, "Communicative English 1A" in kamoku,
+                  "Communicative English 1B" in kamoku, "Communicative English 2A" in kamoku, "Communicative English 2B" in kamoku,
+                  "ベーシック・ライティングA" in kamoku, "ベーシック・ライティングB" in kamoku, "専門演習Ⅰ" in kamoku, "専門演習Ⅱ" in kamoku]):
+            is_required = True
+
+            #print(category, kamoku)
+          category_model , _ = Category.objects.get_or_create(name=category_)
+          Subject.objects.create(category=category_model, name=kamoku, credit=credit, score=score, is_required=is_required, user=user)    
+        
+        else:
+          category = kamoku
+
 class LoadDataFromSite(generic.FormView):
     template_name= "crud/unipa_register.html"
     form_class = SiteAuthDataForm
@@ -273,6 +307,49 @@ class LoadDataFromSite(generic.FormView):
 
             return redirect("list")
         
+        #法律学部の処理を記述
+        elif all([user_grade == '1年', user_faculty == "法学部", user_semester == "後期"]):
+            for i in range(1):
+              scrape_faculty_of_low(chrome_driver, i, self.request.user)
+    
+            return redirect("list")
+        
+        elif all([user_grade == '2年', user_faculty == "法学部", user_semester == "前期"]):
+            for i in range(2):
+              scrape_faculty_of_low(chrome_driver, i, self.request.user)
+    
+            return redirect("list")
+        
+        elif all([user_grade == '2年', user_faculty == "法学部", user_semester == "後期"]):
+            for i in range(3):
+              scrape_faculty_of_low(chrome_driver, i, self.request.user)
+    
+            return redirect("list")
+        
+        elif all([user_grade == '3年', user_faculty == "法学部", user_semester == "前期"]):
+            for i in range(4):
+              scrape_faculty_of_low(chrome_driver, i, self.request.user)
+    
+            return redirect("list")
+        
+        elif all([user_grade == '3年', user_faculty == "法学部", user_semester == "後期"]):
+            for i in range(5):
+              scrape_faculty_of_low(chrome_driver, i, self.request.user)
+    
+            return redirect("list")
+        
+        elif all([user_grade == '4年', user_faculty == "法学部", user_semester == "前期"]):
+            for i in range(6):
+              scrape_faculty_of_low(chrome_driver, i, self.request.user)
+    
+            return redirect("list")
+        
+        elif all([user_grade == '4年', user_faculty == "法学部", user_semester == "後期"]):
+            for i in range(7):
+              scrape_faculty_of_low(chrome_driver, i, self.request.user)
+    
+            return redirect("list")
+
 
 """
     def form_valid(self, form):
